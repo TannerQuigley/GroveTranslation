@@ -17,15 +17,62 @@ var LED = GrovePi.sensors.LED
 var Buzzer = GrovePi.sensors.Buzzer
 
 namespace grove {
+
+    enum PortType {
+        LED
+    }
+
+    interface StoredPort {
+        type : PortType,
+        sensor : any,
+    }
+
+    var _configuredPorts : { [k : number] : StoredPort };
+
+    var _board : GrovePi.board | undefined;
+
+    const _typeToConstructor : Map<PortType, (number) => any> = new Map([
+        [PortType.LED, LED]
+    ]);
+
+    export function initialize() : void {
+        _board = new GrovePi.board({
+            onError : (msg) =>  {
+                console.log("Board failed to initialize: ", msg);
+            },
+            onInit : () => {
+                console.log("GrovePi board initialized!");
+            }
+        });
+        _board.init();
+
+        _configuredPorts = {};
+    }
+
+    function createOrGetSensor(port : number, type : PortType) : GrovePi.base.sensor {
+        var storedPort = _configuredPorts[port];
+        if (storedPort == undefined) {
+            let sensorObject = new _typeToConstructor[type](port);
+            _configuredPorts[port] = {
+                type: type,
+                sensor: sensorObject
+            };
+            return sensorObject;
+        } else if (storedPort.type != type) {
+            throw Error("Sensor type mismatch: was " + storedPort.type + ", expected " + type);
+        }
+        return storedPort.sensor;
+    }
+
     // Led
     export function ledOn(port : number) {
-        var led = new LED(port);
+        const led = createOrGetSensor(port, PortType.LED);
         led.turnOn();
     }
 
     export function ledOff(port : number) {
-        var led = new LED(port);
-        led.turnOff();
+        const led = createOrGetSensor(port, PortType.LED);
+        led.sensor.turnOff();
     }
 
     // Ultrasonic Ranger

@@ -3,6 +3,9 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "target": "es5",
+        "lib": [
+            "es6"
+        ],
         "removeComments": true,
         "sourceMap": true,
         // Strict settings
