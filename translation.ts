@@ -24,7 +24,8 @@ namespace grove {
         Button,
         Rotary,
         Buzzer,
-        Moisture
+        Moisture,
+        Sound
     }
 
     interface StoredPort {
@@ -148,6 +149,13 @@ namespace grove {
     export function buzzerOff(port: number) {
         const buzzer = createOrGetSensor(port, PortType.Buzzer)
         buzzer.turnOff()
+    }
+
+    // Sound
+
+    export function getSoundSensorValue(port : number) {
+        const sound = createOrGetSensor(port, PortType.Sound)
+        return sound.read()
     }
 }
 
