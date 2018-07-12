@@ -20,7 +20,11 @@ namespace grove {
 
     enum PortType {
         LED,
-        Ultrasonic
+        Ultrasonic,
+        Button,
+        Rotary,
+        Buzzer,
+        Moisture
     }
 
     interface StoredPort {
@@ -34,7 +38,11 @@ namespace grove {
 
     const _typeToConstructor : Map<PortType, (number) => any> = new Map([
         [PortType.LED, (port) => new LED(port)],
-        [PortType.Ultrasonic, (port) => new UltrasonicDigitalSensor(port)]
+        [PortType.Ultrasonic, (port) => new UltrasonicDigitalSensor(port)],
+        [PortType.Button, (port) => new DigitalButtonSensor(port)],
+        [PortType.Rotary, (port) => new RotaryAngleAnalogSensor(port)],
+        [PortType.Moisture, (port) => new MoistureSensor(port)],
+        [PortType.Buzzer, (port) => new Buzzer(port)]
     ]);
 
     export function initialize() : void {
@@ -94,14 +102,14 @@ namespace grove {
 
     // Button
     export function pollButtonPress(port : number) {
-        var buttonSensor = new DigitalButtonSensor(port)
+        const buttonSensor = createOrGetSensor(port, PortType.Button)
 
         buttonSensor.on('down', function (res : string) {
             if(res == 'longpress') {
-                // Handle long press
+                console.log("Longpress")
             }
             else {
-                // handle short press
+                console.log("Shortpress")
             }
         })
         buttonSensor.watch()
@@ -109,35 +117,36 @@ namespace grove {
 
     // Rotary Angle
     export function pollRotaryAngle(port : number) {
-        var rotaryAngleSensor = new RotaryAngleAnalogSensor(port)
+        const rotaryAngleSensor = createOrGetSensor(port, PortType.Rotary);
         
         rotaryAngleSensor.start()
         rotaryAngleSensor.on('data', function (_res : any) {
             // Do on Change
+            console.log("Rotary value changed" + _res)
         })
     }
 
     export function getRotaryAngleValue(port : number) {
-        var rotaryAngleSensor = new RotaryAngleAnalogSensor(port)
+        const rotaryAngleSensor = createOrGetSensor(port, PortType.Rotary);
         
         return rotaryAngleSensor.read()
     }
 
     // Moisture Sensor
     export function getMoistureValue(port : number) {
-        var moistureSensor = new MoistureSensor(port)
+        const moistureSensor = createOrGetSensor(port, PortType.Moisture);
 
         return moistureSensor.read()
     }
 
     // Buzzer
-    export function buzzerOn(pin : number) {
-        var buzzer = new Buzzer(pin)
+    export function buzzerOn(port : number) {
+        const buzzer = createOrGetSensor(port, PortType.Buzzer)
         buzzer.turnOn()
     }
 
-    export function buzzerOff(pin : number) {
-        var buzzer = new Buzzer(pin)
+    export function buzzerOff(port: number) {
+        const buzzer = createOrGetSensor(port, PortType.Buzzer)
         buzzer.turnOff()
     }
 }
