@@ -32,7 +32,7 @@ namespace grove {
     var _board : GrovePi.board | undefined;
 
     const _typeToConstructor : Map<PortType, (number) => any> = new Map([
-        [PortType.LED, LED]
+        [PortType.LED, (port) => new LED(port)]
     ]);
 
     export function initialize() : void {
@@ -52,7 +52,11 @@ namespace grove {
     function createOrGetSensor(port : number, type : PortType) : GrovePi.base.sensor {
         var storedPort = _configuredPorts[port];
         if (storedPort == undefined) {
-            let sensorObject = new _typeToConstructor[type](port);
+            let ctor = _typeToConstructor.get(type);
+            let sensorObject = ctor ? ctor(port) : undefined;
+            if (sensorObject == undefined) {
+                throw Error("Could not get ctor for type: " + type);
+            }
             _configuredPorts[port] = {
                 type: type,
                 sensor: sensorObject
@@ -72,7 +76,7 @@ namespace grove {
 
     export function ledOff(port : number) {
         const led = createOrGetSensor(port, PortType.LED);
-        led.sensor.turnOff();
+        led.turnOff();
     }
 
     // Ultrasonic Ranger
