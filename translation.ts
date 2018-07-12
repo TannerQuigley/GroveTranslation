@@ -19,7 +19,8 @@ var Buzzer = GrovePi.sensors.Buzzer
 namespace grove {
 
     enum PortType {
-        LED
+        LED,
+        Ultrasonic
     }
 
     interface StoredPort {
@@ -32,7 +33,8 @@ namespace grove {
     var _board : GrovePi.board | undefined;
 
     const _typeToConstructor : Map<PortType, (number) => any> = new Map([
-        [PortType.LED, (port) => new LED(port)]
+        [PortType.LED, (port) => new LED(port)],
+        [PortType.Ultrasonic, (port) => new UltrasonicDigitalSensor(port)]
     ]);
 
     export function initialize() : void {
@@ -81,10 +83,11 @@ namespace grove {
 
     // Ultrasonic Ranger
     export function pollUltrasonicRanger(port : number) {
-        var ultrasonicSensor = new UltrasonicDigitalSensor(port)
+        const ultrasonicSensor = createOrGetSensor(port, PortType.Ultrasonic)
 
         ultrasonicSensor.on('change', function (_res : any) {
             // Do on Change
+            console.log("Ultrasonic ranger value changed")
         })
         ultrasonicSensor.watch()
     }
