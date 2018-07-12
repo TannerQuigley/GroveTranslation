@@ -15,6 +15,7 @@ var RotaryAngleAnalogSensor = GrovePi.sensors.RotaryAnalog
 var MoistureSensor = GrovePi.sensors.MoistureSensor
 var LED = GrovePi.sensors.LED 
 var Buzzer = GrovePi.sensors.Buzzer
+var Sound = GrovePi.sensor.Sound
 
 namespace grove {
 
@@ -43,7 +44,8 @@ namespace grove {
         [PortType.Button, (port) => new DigitalButtonSensor(port)],
         [PortType.Rotary, (port) => new RotaryAngleAnalogSensor(port)],
         [PortType.Moisture, (port) => new MoistureSensor(port)],
-        [PortType.Buzzer, (port) => new Buzzer(port)]
+        [PortType.Buzzer, (port) => new Buzzer(port)],
+        [PortType.Sound, (port) => new Sound(port)]
     ]);
 
     export function initialize() : void {
