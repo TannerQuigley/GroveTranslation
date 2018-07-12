@@ -15,7 +15,7 @@ var RotaryAngleAnalogSensor = GrovePi.sensors.RotaryAnalog
 var MoistureSensor = GrovePi.sensors.MoistureSensor
 var LED = GrovePi.sensors.LED 
 var Buzzer = GrovePi.sensors.Buzzer
-var Sound = GrovePi.sensor.Sound
+var Sound = GrovePi.sensors.SoundAnalog
 
 namespace grove {
 

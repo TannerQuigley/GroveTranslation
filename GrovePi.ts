@@ -158,6 +158,9 @@ declare namespace GrovePi {
         class RotaryAnalog {
 
         }
+        class SoundAnalog {
+
+        }
     }
 }
 
